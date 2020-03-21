@@ -1,37 +1,57 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * File Name          : main.c
-  * Description        : Main program body
+  * @file           : main.c
+  * @brief          : Main program body
   ******************************************************************************
+  * @attention
   *
-  * COPYRIGHT(c) 2016 STMicroelectronics
+  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
-  *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+/* USER CODE BEGIN PFP */
+/* Private function prototypes -----------------------------------------------*/
 #define GPIO_PIN_SET 1
 #define GPIO_PIN_RESET 0
 #define RS_Port GPIOB
@@ -9875,26 +9895,237 @@ void Lcd_Draw_Line(unsigned int x1,unsigned int y1, unsigned int x2, unsigned in
 	Lcd_DrawDot(x1+(int)(i*((float)(abs(x2-x1))/Max(deltaX,deltaY))),y1+(int)(i*((float)(abs(y2-y1))/Max(deltaX,deltaY))),thick,color);		
 	}
 }
-/* USER CODE END 0 */
+/* USER CODE END PFP */
 
-int main(void)
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+unsigned int Max(unsigned int A, unsigned int B)
+{
+	if(A>B) return (A);
+	else return(B);
+}
+
+unsigned int Min(unsigned int A, unsigned int B)
+{
+	if(A<B) return (A);
+	else return(B);
+}
+
+unsigned int abs(int A)
+{
+	if(A>=0) return A;
+	else return(-A);
+}
+
+void Lcd_Write_Com( int DH)	
+{	
+  HAL_GPIO_WritePin(RS_Port,RS_Pin,0);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,0);	
+	HAL_GPIO_WritePin(D0_Port,D0_Pin,DH&0x01);
+	HAL_GPIO_WritePin(D1_Port,D1_Pin,(DH>>1)&0x01);
+	HAL_GPIO_WritePin(D2_Port,D2_Pin,(DH>>2)&0x01);
+	HAL_GPIO_WritePin(D3_Port,D3_Pin,(DH>>3)&0x01);
+	HAL_GPIO_WritePin(D4_Port,D4_Pin,(DH>>4)&0x01);
+	HAL_GPIO_WritePin(D5_Port,D5_Pin,(DH>>5)&0x01);
+	HAL_GPIO_WritePin(D6_Port,D6_Pin,(DH>>6)&0x01);
+	HAL_GPIO_WritePin(D7_Port,D7_Pin,(DH>>7)&0x01);
+	HAL_GPIO_WritePin(D8_Port,D8_Pin,(DH>>8)&0x01);
+	HAL_GPIO_WritePin(D9_Port,D9_Pin,(DH>>9)&0x01);
+	HAL_GPIO_WritePin(D10_Port,D10_Pin,(DH>>10)&0x01);
+	HAL_GPIO_WritePin(D11_Port,D11_Pin,(DH>>11)&0x01);
+	HAL_GPIO_WritePin(D12_Port,D12_Pin,(DH>>12)&0x01);
+	HAL_GPIO_WritePin(D13_Port,D13_Pin,(DH>>13)&0x01);
+	HAL_GPIO_WritePin(D14_Port,D14_Pin,(DH>>14)&0x01);
+	HAL_GPIO_WritePin(D15_Port,D15_Pin,(DH>>15)&0x01);
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,0);
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,1);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,1);
+}
+
+void lcd_write_color(char hh,char ll)	
+{
+  HAL_GPIO_WritePin(RS_Port,RS_Pin,1);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,0);	  				
+	HAL_GPIO_WritePin(D0_Port,D0_Pin,ll&0x01);
+	HAL_GPIO_WritePin(D1_Port,D1_Pin,(ll>>1)&0x01);
+	HAL_GPIO_WritePin(D2_Port,D2_Pin,(ll>>2)&0x01);
+	HAL_GPIO_WritePin(D3_Port,D3_Pin,(ll>>3)&0x01);
+	HAL_GPIO_WritePin(D4_Port,D4_Pin,(ll>>4)&0x01);
+	HAL_GPIO_WritePin(D5_Port,D5_Pin,(ll>>5)&0x01);
+	HAL_GPIO_WritePin(D6_Port,D6_Pin,(ll>>6)&0x01);
+	HAL_GPIO_WritePin(D7_Port,D7_Pin,(ll>>7)&0x01);
+	HAL_GPIO_WritePin(D8_Port,D8_Pin,hh&0x01);
+	HAL_GPIO_WritePin(D9_Port,D9_Pin,(hh>>1)&0x01);
+	HAL_GPIO_WritePin(D10_Port,D10_Pin,(hh>>2)&0x01);
+	HAL_GPIO_WritePin(D11_Port,D11_Pin,(hh>>3)&0x01);
+	HAL_GPIO_WritePin(D12_Port,D12_Pin,(hh>>4)&0x01);
+	HAL_GPIO_WritePin(D13_Port,D13_Pin,(hh>>5)&0x01);
+	HAL_GPIO_WritePin(D14_Port,D14_Pin,(hh>>6)&0x01);
+	HAL_GPIO_WritePin(D15_Port,D15_Pin,(hh>>7)&0x01);				
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,0);
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,1);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,1);
+}
+
+void Lcd_Write_Data(int DH)	
+{
+  HAL_GPIO_WritePin(RS_Port,RS_Pin,1);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,0);	  				
+	HAL_GPIO_WritePin(D0_Port,D0_Pin,DH&0x01);
+	HAL_GPIO_WritePin(D1_Port,D1_Pin,(DH>>1)&0x01);
+	HAL_GPIO_WritePin(D2_Port,D2_Pin,(DH>>2)&0x01);
+	HAL_GPIO_WritePin(D3_Port,D3_Pin,(DH>>3)&0x01);
+	HAL_GPIO_WritePin(D4_Port,D4_Pin,(DH>>4)&0x01);
+	HAL_GPIO_WritePin(D5_Port,D5_Pin,(DH>>5)&0x01);
+	HAL_GPIO_WritePin(D6_Port,D6_Pin,(DH>>6)&0x01);
+	HAL_GPIO_WritePin(D7_Port,D7_Pin,(DH>>7)&0x01);
+	HAL_GPIO_WritePin(D8_Port,D8_Pin,(DH>>8)&0x01);
+	HAL_GPIO_WritePin(D9_Port,D9_Pin,(DH>>9)&0x01);
+	HAL_GPIO_WritePin(D10_Port,D10_Pin,(DH>>10)&0x01);
+	HAL_GPIO_WritePin(D11_Port,D11_Pin,(DH>>11)&0x01);
+	HAL_GPIO_WritePin(D12_Port,D12_Pin,(DH>>12)&0x01);
+	HAL_GPIO_WritePin(D13_Port,D13_Pin,(DH>>13)&0x01);
+	HAL_GPIO_WritePin(D14_Port,D14_Pin,(DH>>14)&0x01);
+	HAL_GPIO_WritePin(D15_Port,D15_Pin,(DH>>15)&0x01);			
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,0);
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,1);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,1);	
+}
+
+void Lcd_Write_Com_Data(int com1,int dat1)
+{
+  Lcd_Write_Com(com1);
+  Lcd_Write_Data(dat1);
+}
+
+void Address_set(unsigned int x1,unsigned int y1,unsigned int x2,unsigned int y2)
+{ 
+	Lcd_Write_Com_Data(0x0044,(x2<<8)+x1);
+	Lcd_Write_Com_Data(0x0045,y1);
+	Lcd_Write_Com_Data(0x0046,y2);
+	Lcd_Write_Com_Data(0x004e,x1);
+	Lcd_Write_Com_Data(0x004f,y1);
+  Lcd_Write_Com(0x0022);	   	  
+   	
+}
+
+void main_init(void)
 {
 
+	HAL_GPIO_WritePin(REST_Port,REST_Pin,1);
+  HAL_Delay(5);
+	HAL_GPIO_WritePin(REST_Port,REST_Pin,0);
+  HAL_Delay(10);
+	HAL_GPIO_WritePin(REST_Port,REST_Pin,1);
+	HAL_GPIO_WritePin(CS_Port,CS_Pin,0);
+	HAL_GPIO_WritePin(RD_Port,RD_Pin,1);
+	HAL_GPIO_WritePin(WR_Port,WR_Pin,1);
+  HAL_Delay(20);
+
+    Lcd_Write_Com_Data(0x0000,0x0001);    HAL_Delay(1);  
+    Lcd_Write_Com_Data(0x0003,0xA8A4);    HAL_Delay(1);  
+    Lcd_Write_Com_Data(0x000C,0x0000);    HAL_Delay(1);   
+    Lcd_Write_Com_Data(0x000D,0x080C);    HAL_Delay(1);   
+    Lcd_Write_Com_Data(0x000E,0x2B00);    HAL_Delay(1);   
+    Lcd_Write_Com_Data(0x001E,0x00B0);    HAL_Delay(1);   
+    Lcd_Write_Com_Data(0x0001,0x2B3F);    HAL_Delay(1);   
+    Lcd_Write_Com_Data(0x0002,0x0600);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0010,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0011,0x6070);    HAL_Delay(1);        
+    Lcd_Write_Com_Data(0x0005,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0006,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0016,0xEF1C);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0017,0x0003);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0007,0x0233);    HAL_Delay(1);        
+    Lcd_Write_Com_Data(0x000B,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x000F,0x0000);    HAL_Delay(1);        
+    Lcd_Write_Com_Data(0x0041,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0042,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0048,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0049,0x013F);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x004A,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x004B,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0044,0xEF00);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0045,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0046,0x013F);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0030,0x0707);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0031,0x0204);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0032,0x0204);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0033,0x0502);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0034,0x0507);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0035,0x0204);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0036,0x0204);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0037,0x0502);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x003A,0x0302);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x003B,0x0302);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0023,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0024,0x0000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x0025,0x8000);    HAL_Delay(1);
+    Lcd_Write_Com_Data(0x004f,0);        
+    Lcd_Write_Com_Data(0x004e,0);        
+		Lcd_Write_Com(0x0022);                  
+}
+
+void Pant(unsigned int color)
+{
+	int i,j;
+	Address_set(0,0,239,319);
+
+    for(i=0;i<320;i++)
+	 {
+	  for (j=0;j<240;j++)
+	   	{
+         Lcd_Write_Data(color);
+	    }
+
+	  }		
+}
+
+void Lcd_DrawDot(unsigned int x,unsigned int y,unsigned char thick,unsigned int color)
+{unsigned int i;
+ Address_set(x,y,x+thick,y+thick);
+ for(i=0;i<thick*thick;i++) Lcd_Write_Data(color);
+}
+
+void Lcd_Draw_Line(unsigned int x1,unsigned int y1, unsigned int x2, unsigned int y2,unsigned char thick, unsigned int color)
+{unsigned int i; unsigned int j;unsigned int deltaX,deltaY;
+	deltaX=x2-x1;
+	deltaY=y2-y1;
+	for(i=0;i<Max(deltaX,deltaY);i++)
+	{
+	Lcd_DrawDot(x1+(int)(i*((float)(abs(x2-x1))/Max(deltaX,deltaY))),y1+(int)(i*((float)(abs(y2-y1))/Max(deltaX,deltaY))),thick,color);		
+	}
+}
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
   /* USER CODE BEGIN 1 */
 unsigned int i;
   /* USER CODE END 1 */
 
-  /* MCU Configuration----------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
   /* Configure the system clock */
   SystemClock_Config();
 
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
   /* USER CODE BEGIN 2 */
 main_init();
   /* USER CODE END 2 */
@@ -9903,63 +10134,63 @@ main_init();
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  /* USER CODE END WHILE */
-  Address_set(0,0,0+239,0+319);
-		for(i=0;i<76800;i++)
-		{
-			lcd_write_color(image[i*2+1],image[i*2]);		
-		}
-		while(1);
-  /* USER CODE BEGIN 3 */
+    /* USER CODE END WHILE */
 
+    /* USER CODE BEGIN 3 */
+	Address_set(0,0,0+239,0+319);
+	for(i=0;i<76800;i++)
+	{
+	   lcd_write_color(image[i*2+1],image[i*2]);		
+	}
   }
   /* USER CODE END 3 */
-
 }
 
-/** System Clock Configuration
-*/
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-  RCC_OscInitTypeDef RCC_OscInitStruct;
-  RCC_ClkInitTypeDef RCC_ClkInitStruct;
-
+  /** Initializes the CPU, AHB and APB busses clocks 
+  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-  HAL_RCC_OscConfig(&RCC_OscInitStruct);
-
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /** Initializes the CPU, AHB and APB busses clocks 
+  */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2);
 
-  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
-
-  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
-
-  /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
-/** Configure pins as 
-        * Analog 
-        * Input 
-        * Output
-        * EVENT_OUT
-        * EXTI
-*/
-void MX_GPIO_Init(void)
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
 {
-
-  GPIO_InitTypeDef GPIO_InitStruct;
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOD_CLK_ENABLE();
@@ -9984,12 +10215,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = D0_Pin|D1_Pin|D2_Pin|D3_Pin 
                           |D4_Pin|D5_Pin|D6_Pin|D7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pins : D8_Pin D9_Pin CS_Pin REST_Pin */
   GPIO_InitStruct.Pin = D8_Pin|D9_Pin|CS_Pin|REST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
@@ -10000,6 +10233,7 @@ void MX_GPIO_Init(void)
                           |D14_Pin|D15_Pin|RS_Pin|WR_Pin 
                           |RD_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -10009,32 +10243,33 @@ void MX_GPIO_Init(void)
 
 /* USER CODE END 4 */
 
-#ifdef USE_FULL_ASSERT
-
 /**
-   * @brief Reports the name of the source file and the source line number
-   * where the assert_param error has occurred.
-   * @param file: pointer to the source file name
-   * @param line: assert_param error line source number
-   * @retval None
-   */
-void assert_failed(uint8_t* file, uint32_t line)
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
 {
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+
+  /* USER CODE END Error_Handler_Debug */
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{ 
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
   /* USER CODE END 6 */
-
 }
-
-#endif
-
-/**
-  * @}
-  */ 
-
-/**
-  * @}
-*/ 
+#endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

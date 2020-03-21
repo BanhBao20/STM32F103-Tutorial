@@ -62,10 +62,14 @@ ProjectManager.ProjectBuild=false
 ProjectManager.ProjectFileName=Blink.ioc
 ProjectManager.ProjectName=Blink
 ProjectManager.StackSize=0x400
-ProjectManager.TargetToolchain=MDK-ARM V4
+ProjectManager.TargetToolchain=MDK-ARM V5
 ProjectManager.ToolChainLocation=
 ProjectManager.UnderRoot=false
+<<<<<<< HEAD
+ProjectManager.functionlistsort=1-MX_GPIO_Init-GPIO-false-HAL-true,2-SystemClock_Config-RCC-false-HAL-false
+=======
 ProjectManager.functionlistsort=
+>>>>>>> 41c6af6b27561b1687b56a169e94afb0feaedbd9
 RCC.APB1Freq_Value=8000000
 RCC.APB2Freq_Value=8000000
 RCC.FamilyName=M
